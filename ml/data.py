@@ -69,6 +69,9 @@ def build_features(
         needed = ['G1','G2','G3','failures']
     else:
         needed = NUMERICAL + (YES_NO if extended else [])
+    # Ensure difficulty grouping column is present if difficulty feature requested
+    if add_difficulty and not super_minimal and difficulty_group not in needed:
+        needed.append(difficulty_group)
     for c in needed:
         if c not in df.columns:
             df[c] = pd.NA
@@ -114,6 +117,9 @@ def build_features(
         if extended:
             feature_cols.extend([c + '_bin' for c in YES_NO])
 
+    # Drop grouping column if it was only needed for difficulty merge and not part of features
+    if difficulty_group in work.columns and difficulty_group not in feature_cols:
+        work = work.drop(columns=[difficulty_group])
     X = work[feature_cols].astype(float)
 
     if not keep_g1_g2 and not super_minimal:
