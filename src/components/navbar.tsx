@@ -1,6 +1,6 @@
-import Link from "next/link"
+import Link from "next/link";
 
-export function Navbar() {
+export function Navbar({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -8,25 +8,27 @@ export function Navbar() {
           <div className="navbar-nav">
             <Link href="/" className="navbar-brand">
               <div className="navbar-logo">
-                <span className="navbar-logo-text">M</span>
+                <span className="navbar-logo-text">📚</span>
               </div>
-              <span className="navbar-title">Market</span>
+              <span className="navbar-title">ScholarMarket</span>
             </Link>
             <Link href="/" className="navbar-link">
               Home
             </Link>
+            <Link href="/" className="navbar-link">
+              Courses
+            </Link>
           </div>
 
           <div className="navbar-actions">
-            <Link href="/login" className="btn btn-ghost">
-              Login
-            </Link>
-            <Link href="/signup" className="btn btn-primary">
-              Sign Up
-            </Link>
+            {!isLoggedIn && (
+              <Link href="/login" className="btn btn-primary">
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>
     </nav>
-  )
+  );
 }

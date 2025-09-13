@@ -1,12 +1,10 @@
-import { Navbar } from "@/components/navbar"
+
 import { ContentCard } from "@/components/content-card"
 import { sampleData } from "@/sample-data"
 
 export default function HomePage() {
   return (
     <div className="main-content">
-      <Navbar />
-
       <main className="page-container">
         <div className="page-header">
           <h1 className="page-title">Market Insights Dashboard</h1>
