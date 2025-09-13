@@ -17,6 +17,7 @@ export default function HomePage() {
           {sampleData.map((item, index) => (
             <ContentCard
               key={index}
+              id={index}
               title={item.title}
               details={item.details}
             />
