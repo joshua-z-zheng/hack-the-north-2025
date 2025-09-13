@@ -49,7 +49,11 @@ export default function HomePage() {
 
         <div className="grid grid-responsive">
           {sampleData.map((item, index) => (
-            <ContentCard key={index} title={item.title} details={item.details} />
+            <ContentCard
+              key={index}
+              title={item.title}
+              details={item.details}
+            />
           ))}
         </div>
       </main>
