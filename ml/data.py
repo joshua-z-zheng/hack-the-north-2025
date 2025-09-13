@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-def generate_student_data(n_samples=100000, seed=42):
+def generate_student_data(n_samples=10000, seed=42):
     np.random.seed(seed)
     data = []
     
