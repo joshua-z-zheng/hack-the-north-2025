@@ -1,7 +1,22 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
-export function Navbar({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
+export function Navbar({
+  isLoggedIn = false,
+  userEmail = null,
+  onLogout
+}: {
+  isLoggedIn?: boolean;
+  userEmail?: string | null;
+  onLogout?: () => void;
+}) {
+  const getDisplayEmail = (email: string | null) => {
+    if (!email) return '';
+    const atIndex = email.indexOf('@');
+    return atIndex > 0 ? email.substring(0, atIndex) : email;
+  };
+
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,12 +45,26 @@ export function Navbar({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
           </div>
 
           <div className="flex items-center space-x-4">
-            {!isLoggedIn && (
+            {!isLoggedIn ? (
               <Button asChild>
                 <Link href="/login">
                   Login
                 </Link>
               </Button>
+            ) : (
+              <div className="flex items-center space-x-3">
+                <span className="text-sm font-medium text-foreground">
+                  {getDisplayEmail(userEmail)}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onLogout}
+                  className="p-2 hover:bg-muted"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
             )}
           </div>
         </div>

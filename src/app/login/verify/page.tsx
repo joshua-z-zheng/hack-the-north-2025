@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function VerifyPage() {
   const [code, setCode] = useState("")
@@ -10,6 +11,7 @@ export default function VerifyPage() {
   const searchParams = useSearchParams()
   const email = searchParams.get("email") || ""
   const router = useRouter()
+  const { setAuthState } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,6 +25,7 @@ export default function VerifyPage() {
     })
     if (res.ok) {
       setSuccess(true)
+      setAuthState(true, email) // Update auth state with email
       router.push("/")
     } else {
       const data = await res.json()
