@@ -185,7 +185,7 @@ def main():
 
     metrics, preds, probs = evaluate_model(model, X_val, y_val, device=device, classification=args.ten_class)
     if args.ten_class:
-        print(f"Validation Accuracy: {metrics['accuracy']:.3f} | F1_macro: {metrics['f1_macro']:.3f}")
+        print(f"Validation Accuracy: {metrics['accuracy']*100:.1f}% | F1_macro: {metrics['f1_macro']:.3f}")
     else:
         print(f"Validation MAE: {metrics['mae']:.3f} | R2: {metrics['r2']:.3f}")
 
@@ -193,6 +193,7 @@ def main():
         save_obj = {
             'model_state': model.state_dict(),
             'input_dim': X_train.shape[1],
+            'feature_columns': list(X_train.columns),
             'args': vars(args),
             'classification': args.ten_class,
             'metrics': metrics
@@ -207,9 +208,9 @@ def main():
 if __name__ == '__main__':
     main()
 
-def load_model(path: str) -> GradePredictor:
+def load_model(path: str):
     ckpt = torch.load(path, map_location='cpu')
     model = GradePredictor(input_dim=ckpt['input_dim'], num_classes=10 if ckpt.get('classification') else None)
     model.load_state_dict(ckpt['model_state'])
     model.eval()
-    return model
+    return model, ckpt
