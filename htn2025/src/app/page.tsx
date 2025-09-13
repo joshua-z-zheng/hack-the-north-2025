@@ -1,95 +1,58 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { Navbar } from "@/components/navbar"
+import { ContentCard } from "@/components/content-card"
 
-export default function Home() {
+const sampleData = [
+  {
+    title: "Market Analysis Q4 2024",
+    details: "Comprehensive analysis of market trends and predictions for the upcoming quarter with detailed insights.",
+  },
+  {
+    title: "Technology Sector Growth",
+    details: "Exploring the rapid expansion in the technology sector and its impact on global markets.",
+  },
+  {
+    title: "Cryptocurrency Trends",
+    details: "Latest developments in cryptocurrency markets and blockchain technology adoption rates.",
+  },
+  {
+    title: "Sustainable Energy Investments",
+    details: "Investment opportunities in renewable energy sectors and their long-term market potential.",
+  },
+  {
+    title: "Global Economic Outlook",
+    details: "Economic forecasts and analysis of international trade patterns affecting various industries.",
+  },
+  {
+    title: "AI and Machine Learning",
+    details: "The growing influence of artificial intelligence on business operations and market dynamics.",
+  },
+  {
+    title: "Healthcare Innovation",
+    details: "Breakthrough technologies in healthcare and their market implications for investors.",
+  },
+  {
+    title: "Real Estate Market Shifts",
+    details: "Analysis of changing real estate trends and their impact on investment strategies.",
+  },
+]
+
+export default function HomePage() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="main-content">
+      <Navbar />
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+      <main className="page-container">
+        <div className="page-header">
+          <h1 className="page-title">Market Insights Dashboard</h1>
+          <p className="page-subtitle">Stay informed with the latest market trends and analysis</p>
+        </div>
+
+        <div className="grid grid-responsive">
+          {sampleData.map((item, index) => (
+            <ContentCard key={index} title={item.title} details={item.details} />
+          ))}
         </div>
       </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
-  );
+  )
 }
