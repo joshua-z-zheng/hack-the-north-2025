@@ -3,6 +3,7 @@
 import { useParams, useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { sampleData } from "@/sample-data"
+import "../content.css"
 
 export default function ContentDetailPage() {
   const params = useParams()
@@ -38,9 +39,17 @@ export default function ContentDetailPage() {
             <p className="content-summary">{content.details}</p>
           </header>
 
-          {/* <div className="content-body">
-            <p>{content.fullContent}</p>
-          </div> */}
+          <div className="content-body">
+            <button onClick={() => {}} className="bet-button">
+              Bet 95%-100%
+            </button>
+            <button onClick={() => {}} className="bet-button">
+              Bet 90%-95%
+            </button>
+            <button onClick={() => {}} className="bet-button">
+              Bet 85%-90%
+            </button>
+          </div>
         </article>
       </main>
     </div>
