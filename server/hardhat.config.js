@@ -35,37 +35,11 @@ module.exports = {
       url: process.env.SEPOLIA_RPC_URL || "https://rpc.sepolia.org",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 11155111
-    },
-
-    // Optimism Sepolia (L2 testnet)
-    optimismSepolia: {
-      url: "https://sepolia.optimism.io",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      chainId: 11155420,
-      gasPrice: 1000000000
-    },
-
-    // Arbitrum Sepolia (L2 testnet)
-    arbitrumSepolia: {
-      url: "https://sepolia-rollup.arbitrum.io/rpc",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      chainId: 421614
-    },
-
-    // Base Sepolia (L2 testnet)
-    baseSepolia: {
-      url: "https://sepolia.base.org",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      chainId: 84532,
-      gasPrice: 1000000000
     }
   },
   etherscan: {
     apiKey: {
-      sepolia: process.env.ETHERSCAN_API_KEY || "",
-      optimismSepolia: process.env.OPTIMISM_API_KEY || "",
-      arbitrumSepolia: process.env.ARBISCAN_API_KEY || "",
-      baseSepolia: process.env.BASESCAN_API_KEY || ""
+      sepolia: process.env.ETHERSCAN_API_KEY || ""
     }
   }
 };
