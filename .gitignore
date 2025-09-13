@@ -1,0 +1,48 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.env/
+mlenv/
+
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data outputs
+data/
+datasets/
+*.parquet
+*.csv
+*.tsv
+*.feather
+*.arrow
+
+# Model artifacts
+*.pt
+*.pth
+checkpoints/
+models/
+
+
+# Cache dirs
+.mypy_cache/
+.pytest_cache/
+.cache/
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# PyTorch Lightning / wandb etc
+lightning_logs/
+wandb/
