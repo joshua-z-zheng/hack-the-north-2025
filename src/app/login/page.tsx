@@ -30,10 +30,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="max-w-5xl mx-auto px-4 py-8 md:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2 leading-tight">Login</h1>
-        </div>
+      <main className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
         <div className="flex justify-center items-center w-full">
           <div className="w-[350px] p-8 border border-border rounded-lg bg-card shadow-lg">
             <h2 className="mb-6 text-center text-card-foreground">Login with Email</h2>

@@ -1,11 +1,12 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 
 interface ContentCardProps {
   title: string
   details: string
-  id: number // Added id prop for navigation
+  id: number
   className?: string
 }
 
@@ -17,17 +18,16 @@ export function ContentCard({ title, details, id, className }: ContentCardProps)
   }
 
   return (
-    <div
-      className={`card ${className || ""}`}
-      onClick={handleClick} // Made card clickable
-      style={{ cursor: "pointer" }} // Added pointer cursor
+    <Card
+      className={`cursor-pointer hover:shadow-md transition-shadow ${className || ""}`}
+      onClick={handleClick}
     >
-      <div className="card-header">
-        <h3 className="card-title">{title}</h3>
-      </div>
-      <div className="card-content">
-        <p className="card-description">{details}</p>
-      </div>
-    </div>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground">{details}</p>
+      </CardContent>
+    </Card>
   )
 }
