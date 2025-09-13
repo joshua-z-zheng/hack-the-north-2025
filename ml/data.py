@@ -56,7 +56,8 @@ def build_features(
     keep_g1_g2: bool = False,
     add_difficulty: bool = False,
     difficulty_group: str = 'school',
-    dfw_threshold_percent: float = 50.0
+    dfw_threshold_percent: float = 50.0,
+    ten_class: bool = False
 ) -> Tuple[pd.DataFrame, pd.Series]:
     """Build feature matrix X and target y.
 
@@ -106,7 +107,13 @@ def build_features(
             if g_col in work:
                 work[g_col] = work[g_col].astype(float) / 20.0
 
-    y = work['G3'].astype(float)
+    y_cont = work['G3'].astype(float)
+    if ten_class:
+        # Map integer grades 0-20 into 10 bins: [0-1]->0, [2-3]->1, ... [18-19]->9, 20 also -> 9
+        g_int = y_cont.round().clip(lower=0, upper=20).astype(int)
+        y = (g_int // 2).clip(upper=9)
+    else:
+        y = y_cont
 
     if super_minimal:
         feature_cols: List[str] = ['G1','G2','failures']
@@ -142,6 +149,7 @@ def main():
     parser.add_argument('--add-difficulty', action='store_true', help='Add computed course difficulty feature.')
     parser.add_argument('--difficulty-group', type=str, default='school', help='Grouping column for difficulty (default school).')
     parser.add_argument('--dfw-threshold-percent', type=float, default=50.0, help='Threshold (0-100) for DFW rate component (default 50).')
+    parser.add_argument('--ten-class', action='store_true', help='If set, convert target into 10 ordinal classes (G3 bins of size 2).')
     args = parser.parse_args()
 
     df = fetch_raw(args.limit)
@@ -153,11 +161,13 @@ def main():
         keep_g1_g2=args.keep_g1_g2,
         add_difficulty=args.add_difficulty,
         difficulty_group=args.difficulty_group,
-        dfw_threshold_percent=args.dfw_threshold_percent
+        dfw_threshold_percent=args.dfw_threshold_percent,
+        ten_class=args.ten_class
     )
 
     mode = 'super-minimal' if args.super_minimal else ('extended' if args.extended else 'minimal')
-    print(f"Mode: {mode} | scale: {'0-1' if args.scale_grades else '0-20'} | difficulty: {args.add_difficulty}")
+    target_mode = '10-classes' if args.ten_class else ('scaled' if args.scale_grades else 'regression-0-20')
+    print(f"Mode: {mode} | target: {target_mode} | difficulty: {args.add_difficulty}")
     if args.add_difficulty and args.super_minimal:
         print("Note: difficulty requested but super-minimal mode skips it.")
     print(f"Features shape: {X.shape}; Target shape: {y.shape}")
