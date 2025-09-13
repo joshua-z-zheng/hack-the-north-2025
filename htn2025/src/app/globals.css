@@ -391,3 +391,76 @@ body {
     padding: 2rem 2rem;
   }
 }
+
+/* Back button styles */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 2rem;
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: var(--muted);
+}
+
+/* Content detail page styles */
+.content-detail {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.content-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.content-title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: var(--foreground);
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.content-summary {
+  font-size: 1.125rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.content-body {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--foreground);
+}
+
+.content-body p {
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .content-title {
+    font-size: 2.5rem;
+  }
+
+  .content-summary {
+    font-size: 1.25rem;
+  }
+
+  .content-body {
+    font-size: 1.125rem;
+  }
+}
