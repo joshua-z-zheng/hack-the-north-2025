@@ -7,7 +7,17 @@ import argparse
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, r2_score
 
-from . import data as data_mod  # assumes package context; if running directly adjust to 'import ml.data as data_mod'
+# Robust import of data module whether run as package (python -m ml.Model) or script (python ml/Model.py)
+try:
+    from . import data as data_mod  # type: ignore
+except ImportError:  # pragma: no cover
+    import os, sys
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.dirname(current_dir)
+    if parent_dir not in sys.path:
+        sys.path.append(parent_dir)
+    import ml.data as data_mod  # type: ignore
+
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

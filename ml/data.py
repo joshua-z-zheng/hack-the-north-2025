@@ -181,3 +181,30 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# Convenience loader for previously saved parquet outputs
+def load_processed(out_dir: str):
+    """Load processed feature/target parquet files from directory.
+
+    Returns
+    -------
+    If train/test split exists: (X_train, X_test, y_train, y_test)
+    Else: (X, y, None, None)
+    """
+    p = Path(out_dir)
+    x_train = p / 'X_train.parquet'
+    x_file = p / 'X.parquet'
+    if x_train.exists():
+        import pandas as _pd
+        X_train = _pd.read_parquet(x_train)
+        X_test = _pd.read_parquet(p / 'X_test.parquet')
+        y_train = _pd.read_parquet(p / 'y_train.parquet')['final_grade']
+        y_test = _pd.read_parquet(p / 'y_test.parquet')['final_grade']
+        return X_train, X_test, y_train, y_test
+    elif x_file.exists():
+        import pandas as _pd
+        X = _pd.read_parquet(x_file)
+        y = _pd.read_parquet(p / 'y.parquet')['final_grade']
+        return X, y, None, None
+    else:
+        raise FileNotFoundError(f"No processed parquet files in {out_dir}")
