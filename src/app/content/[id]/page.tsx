@@ -19,6 +19,7 @@ interface Market {
 interface Course {
   code: string
   odds: Market[]
+  contract?: string
 }
 
 // Client-side helper functions
@@ -53,6 +54,7 @@ export default function ContentDetailPage({ params }: Props) {
   const [selectedMarket, setSelectedMarket] = useState<number | null>(null)
   const [shareCount, setShareCount] = useState<number>(1)
   const [loading, setLoading] = useState(true)
+  const [placingBet, setPlacingBet] = useState(false)
 
   useEffect(() => {
     const loadData = async () => {
@@ -128,6 +130,42 @@ export default function ContentDetailPage({ params }: Props) {
 
   const calculateReward = (shares: number) => {
     return shares.toFixed(2)
+  }
+
+    const handlePlaceBet = async () => {
+    if (!selectedMarketData || !course || placingBet) return
+
+    setPlacingBet(true)
+
+    try {
+      const response = await fetch('/api/place-bet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          courseCode: course.code,
+          threshold: selectedMarketData.threshold,
+          betAmount: calculateCost(selectedMarketData.probability, shareCount)
+        })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to place bet')
+      }
+
+      const result = await response.json()
+      console.log('Bet placed successfully:', result)
+
+      // Refresh the page to show updated data
+      window.location.reload()
+    } catch (error) {
+      console.error('Error placing bet:', error)
+      alert(`Failed to place bet: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setPlacingBet(false)
+    }
   }
 
   const emojiMap: Record<string, string> = {
@@ -331,8 +369,13 @@ export default function ContentDetailPage({ params }: Props) {
                     </div>
                   </div>
 
-                  <Button className="w-full" size="lg">
-                    Buy Shares
+                  <Button
+                    className="w-full"
+                    size="lg"
+                    onClick={handlePlaceBet}
+                    disabled={placingBet}
+                  >
+                    {placingBet ? 'Placing Bet...' : 'Buy Shares'}
                   </Button>
                 </div>
               </div>

@@ -9,6 +9,7 @@ export interface Course {
     threshold: number
     shares?: number
   }[]
+  contract?: string
 }
 
 export async function getUserCourses(): Promise<Course[]> {

@@ -3,6 +3,7 @@ import sys
 from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import torch
 import uvicorn
@@ -43,6 +44,15 @@ class HealthResponse(BaseModel):
     seq_len: int
 
 app = FastAPI(title="Grade Bucket Prediction API", version="1.0.0")
+
+# Configure CORS (adjust allowed origins to your frontend domain in production)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # TODO: replace with specific domain(s)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 _MODEL = None  # Loaded torch.nn.Module
 _META = None   # Raw checkpoint dictionary
