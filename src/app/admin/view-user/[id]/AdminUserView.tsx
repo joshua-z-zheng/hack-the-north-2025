@@ -92,8 +92,18 @@ export default function AdminUserView({ user }: Props) {
             <button 
               type="submit"
               className="px-5 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 transition"
-              onClick={function() {
-                
+              onClick={async function() {
+                const res = await fetch("/api/admin/enroll-course", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    id: user.email,
+                    courseCode: "MATH 115"
+                  })
+                })
+                console.log(res);
               }}
             >
               Add a Course
