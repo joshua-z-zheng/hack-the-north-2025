@@ -122,9 +122,8 @@ export async function POST(request: NextRequest) {
 
       const betResult = await betResponse.json()
 
-      // Extract bet ID from transaction or use a placeholder
-      // In a real implementation, you'd parse the transaction receipt for the bet ID
-      const betId = Date.now() // Temporary - should get from contract event
+      // Use the actual bet ID returned from the smart contract
+      const betId = betResult.betId ? parseInt(betResult.betId) : Date.now() // Fallback to timestamp if betId not available
 
       // Update user's bets array and course odds
       const updateOperations: any = {
@@ -137,6 +136,7 @@ export async function POST(request: NextRequest) {
             betAmountETH: ethAmount, // Also store ETH amount for reference
             contractAddress,
             transactionHash: betResult.transactionHash,
+            resolved: false,
             timestamp: new Date()
           }
         },
@@ -162,6 +162,7 @@ export async function POST(request: NextRequest) {
           courseCode,
           threshold,
           betAmount: usdAmount,
+          resolved: false,
           betAmountETH: ethAmount
         }
       })
