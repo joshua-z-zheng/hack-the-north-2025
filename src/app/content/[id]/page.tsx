@@ -71,7 +71,7 @@ export default function ContentDetailPage({ params }: Props) {
   useEffect(() => {
     const loadData = async () => {
       const resolvedParams = await params
-      const courseId = Number.parseInt(resolvedParams.id)
+      const courseCode = resolvedParams.id // This is now the course code, not an index
 
       setId(resolvedParams.id)
 
@@ -81,7 +81,9 @@ export default function ContentDetailPage({ params }: Props) {
       if (authState) {
         const userCourses = await getUserCourses()
         setCourses(userCourses)
-        setCourse(userCourses[courseId] || null)
+        // Find course by code instead of index
+        const foundCourse = userCourses.find(course => course.code === courseCode)
+        setCourse(foundCourse || null)
       }
 
       setLoading(false)
