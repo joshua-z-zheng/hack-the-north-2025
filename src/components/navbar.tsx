@@ -31,13 +31,13 @@ export function Navbar({
             <div className="hidden md:flex items-center space-x-6">
               <Link
                 href="/"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 Home
               </Link>
               <Link
                 href="/bets"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 Bets
               </Link>
@@ -53,7 +53,7 @@ export function Navbar({
               </Button>
             ) : (
               <div className="flex items-center space-x-3">
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-base font-medium text-foreground">
                   {getDisplayEmail(userEmail)}
                 </span>
                 <Button
