@@ -9,7 +9,7 @@ interface ContentCardProps {
     probability: number
     threshold: number
   }[]
-  id: number
+  id: string
   className?: string
 }
 

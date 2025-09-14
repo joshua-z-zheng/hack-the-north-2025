@@ -5,7 +5,7 @@ export default async function AdminPage() {
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
   const users = await db.collection("users").find({}).toArray();
-  console.log(users);
+  // console.log(users);
 
   return (
     <div className="min-h-screen bg-background">

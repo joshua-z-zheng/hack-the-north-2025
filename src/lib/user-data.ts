@@ -10,6 +10,7 @@ export interface Course {
     shares?: number
   }[]
   contract?: string
+  past?: boolean
 }
 
 export async function getUserCourses(): Promise<Course[]> {
