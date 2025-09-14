@@ -12,10 +12,9 @@ export default async function AdminPage({ params }: Props) {
 
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
-  const user: User = await db.collection("users").findOne({"email": decodeURIComponent(id.trim())}) as any;
-  user._id = undefined;
+  const userDoc = await db.collection("users").findOne({"email": decodeURIComponent(id.trim())});
 
-  if (!user) {
+  if (!userDoc) {
     return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
@@ -26,6 +25,12 @@ export default async function AdminPage({ params }: Props) {
     </div>
     )
   }
+
+  // Convert MongoDB document to plain object for client component
+  const user = {
+    email: userDoc.email,
+    courses: userDoc.courses || []
+  };
 
   return <AdminUserView user={user} />
 }

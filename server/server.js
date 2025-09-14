@@ -110,12 +110,28 @@ app.post('/api/place-bet', async (req, res) => {
       value: ethers.parseEther(betAmount.toString())
     });
 
-    await tx.wait();
+    const receipt = await tx.wait();
+
+    // Extract bet ID from the BetPlaced event
+    let betId = null;
+    for (const log of receipt.logs) {
+      try {
+        const parsedLog = contract.interface.parseLog(log);
+        if (parsedLog.name === 'BetPlaced') {
+          betId = parsedLog.args.betId.toString();
+          break;
+        }
+      } catch (e) {
+        // Skip logs that can't be parsed
+        continue;
+      }
+    }
 
     res.json({
       success: true,
       message: 'Bet placed successfully',
-      transactionHash: tx.hash
+      transactionHash: tx.hash,
+      betId: betId
     });
 
   } catch (error) {
@@ -157,6 +173,83 @@ app.post('/api/admin/resolve-bet', isAdmin, async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to resolve bet',
+      details: error.message
+    });
+  }
+});
+
+// Resolve all bets endpoint (admin only)
+app.post('/api/admin/resolve-all-bets', isAdmin, async (req, res) => {
+  try {
+    const { contractAddress, actualGrade } = req.body;
+
+    if (!contractAddress || actualGrade === undefined) {
+      return res.status(400).json({
+        error: 'Missing required fields: contractAddress, actualGrade'
+      });
+    }
+
+    // Get contract instance
+    const contract = await ethers.getContractAt('GradePredictionMarket', contractAddress);
+
+    // Get the next bet ID to know how many bets exist
+    const nextBetId = await contract.nextBetId();
+    const totalBets = parseInt(nextBetId.toString());
+
+    console.log(`Found ${totalBets} total bets in contract ${contractAddress}`);
+
+    const resolvedBets = [];
+    const errors = [];
+
+    // Iterate through all bet IDs and resolve unresolved ones
+    for (let betId = 0; betId < totalBets; betId++) {
+      try {
+        // Check if bet exists and is unresolved
+        const bet = await contract.getBet(betId);
+        const [bettor, betAmount, gradeThreshold, potentialPayout, isResolved, won, timestamp] = bet;
+
+        if (!isResolved) {
+          console.log(`Resolving bet ${betId} with threshold ${gradeThreshold} and actual grade ${actualGrade}`);
+
+          // Resolve the bet
+          const tx = await contract.resolveBet(betId, actualGrade);
+          await tx.wait();
+
+          resolvedBets.push({
+            betId,
+            bettor,
+            gradeThreshold: gradeThreshold.toString(),
+            won: actualGrade > parseInt(gradeThreshold.toString()),
+            transactionHash: tx.hash
+          });
+
+
+          console.log(`Successfully resolved bet ${betId}`);
+        } else {
+          console.log(`Bet ${betId} already resolved, skipping`);
+        }
+      } catch (error) {
+        console.error(`Error resolving bet ${betId}:`, error.message);
+        errors.push({
+          betId,
+          error: error.message
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Resolved ${resolvedBets.length} bets successfully`,
+      resolvedBets,
+      errors: errors.length > 0 ? errors : undefined,
+      totalBetsChecked: totalBets
+    });
+
+  } catch (error) {
+    console.error('Bulk bet resolution error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to resolve bets',
       details: error.message
     });
   }

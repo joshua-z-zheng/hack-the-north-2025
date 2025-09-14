@@ -8,6 +8,7 @@ interface Course {
   code: string;
   grade?: number | null;
   past?: boolean;
+  contract?: string;
 }
 
 interface User {
