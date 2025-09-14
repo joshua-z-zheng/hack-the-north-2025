@@ -1,5 +1,6 @@
 import AdminUserView from "./AdminUserView";
 import clientPromise from "@/lib/mongodb";
+import { User } from "@/types";
 
 interface Props {
   params: Promise<{ id: string }>
@@ -11,7 +12,7 @@ export default async function AdminPage({ params }: Props) {
 
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
-  const user = await db.collection("users").findOne({"email": decodeURIComponent(id.trim())});
+  const user: User = await db.collection("users").findOne({"email": decodeURIComponent(id.trim())}) as any;
 
   if (!user) {
     return (
