@@ -3,7 +3,7 @@ pragma solidity ^0.8.19;
 
 contract GradePredictionMarket {
     address public admin;
-    uint256 public constant PAYOUT_AMOUNT = 0.001 ether; // ~$1 at $1000/ETH
+    uint256 public constant PAYOUT_AMOUNT = 0.001 ether; // $1.00 payout (at $1 = 0.001 ETH conversion)
 
     struct Bet {
         address bettor;

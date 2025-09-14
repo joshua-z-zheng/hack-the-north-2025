@@ -27,8 +27,8 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
 
-// Deploy smart contract endpoint
-app.post('/api/admin/deploy-contract', isAdmin, async (req, res) => {
+// Deploy smart contract endpoint (public for on-demand creation)
+app.post('/api/deploy-contract', async (req, res) => {
   try {
     console.log('Starting contract deployment...');
 
@@ -46,7 +46,7 @@ app.post('/api/admin/deploy-contract', isAdmin, async (req, res) => {
     console.log('Contract deployed to:', contractAddress);
 
     // Fund the contract with some ETH for payouts
-    const fundAmount = ethers.parseEther('0.001'); // 0.01 ETH
+    const fundAmount = ethers.parseEther('0.002'); // 0.002 ETH (enough for 2 payouts of $1.00 each)
     console.log('Funding contract with', ethers.formatEther(fundAmount), 'ETH...');
 
     const fundTx = await contract.fundContract({ value: fundAmount });

@@ -31,7 +31,7 @@ export default async function HomePage() {
             <p className="text-lg text-muted-foreground">No courses found. Your courses will appear here once added to your profile.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
             {courses.map((course, index) => (
               <ContentCard
                 key={index}
