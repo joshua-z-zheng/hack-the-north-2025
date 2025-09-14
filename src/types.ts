@@ -27,6 +27,7 @@ export class Course {
 }
 
 export class User {
+  _id?: any;
   email: string = "";
   sub: string = "";
   courses: Course[] = [];
