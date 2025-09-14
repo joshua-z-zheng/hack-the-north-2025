@@ -1,4 +1,5 @@
 import clientPromise from "@/lib/mongodb";
+import { User } from "@/types";
 
 export default async function AdminPage() {
   const client = await clientPromise;
@@ -17,7 +18,7 @@ export default async function AdminPage() {
           {(function() {
             let displ = [];
             for (let i = 0; i < users.length; i++) {
-              let user = users[i];
+              let user: User = users[i] as any as User;
               displ.push(
                 <div key={i} className="m-4">
                   <a href={`/admin/view-user/${user.email}`}

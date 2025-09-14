@@ -1,5 +1,6 @@
 import AdminUserView from "./AdminUserView";
 import clientPromise from "@/lib/mongodb";
+import { User } from "@/types";
 
 interface Props {
   params: Promise<{ id: string }>

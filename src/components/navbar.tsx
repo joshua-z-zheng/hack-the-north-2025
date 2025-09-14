@@ -36,10 +36,10 @@ export function Navbar({
                 Home
               </Link>
               <Link
-                href="/"
+                href="/bets"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                Courses
+                Bets
               </Link>
             </div>
           </div>
