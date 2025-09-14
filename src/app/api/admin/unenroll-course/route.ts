@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   if (!curr) {
     return NextResponse.json({ error: "User DNE" }, { status: 400 });
   }
-  curr.courses.push(new Course(body.courseCode));
+  curr.courses = curr.courses.filter((x: any) => x.code != body.courseCode);
   const result = await coll.updateOne(
     {email: body.id},
     curr
