@@ -32,7 +32,7 @@ export default async function HomePage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-            {courses.map((course, index) => (
+            {courses.filter(course => course.odds && !course.past).map((course, index) => (
               <ContentCard
                 key={index}
                 id={index}

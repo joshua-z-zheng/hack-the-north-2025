@@ -26,15 +26,22 @@ export default function BetsDashboardClient() {
 
   useEffect(() => { load(); const id=setInterval(load,15000); return ()=>clearInterval(id); }, [load]);
 
-  // Derive metrics (fallback for missing fields)
-  let openValue=0, realized=0, open=0, settled=0, wins=0;
-  bets.forEach(b=>{
-    const stake=(b as any).stakeUSD ?? (b as any).betAmount ?? 0;
-    const status=(b as any).status;
-    const realizedP=(b as any).realizedProfitUSD ?? 0;
-    const outcome=(b as any).outcome;
-    if(status==='settled') { settled++; realized+=realizedP; if(outcome==='win') wins++; }
-    else { open++; openValue+=stake; }
+  // Derive metrics using the correct bet structure
+  let openValue = 0, realized = 0, open = 0, settled = 0, wins = 0;
+  bets.forEach(b => {
+    const stake = b.betAmount || 0;
+    const isResolved = b.resolved;
+    const profit = b.profit || 0;
+    const won = b.won;
+
+    if (isResolved) {
+      settled++;
+      realized += profit;
+      if (won) wins++;
+    } else {
+      open++;
+      openValue += stake;
+    }
   });
   const total=bets.length;
   const winRate = settled ? `${Math.round((wins/settled)*100)}%` : '—';

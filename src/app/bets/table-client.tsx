@@ -2,22 +2,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
 export interface RawBet {
-  betId?: number | string;
-  id?: number | string;
+  betId: number;
   courseCode: string;
-  gradeThreshold?: number;
-  threshold?: number;
-  betAmount?: number;
-  stakeUSD?: number;
-  betAmountETH?: number;
-  stakeETH?: number;
-  transactionHash?: string | null;
-  timestamp?: string | Date;
-  createdAt?: string | Date | null;
-  status?: string;
-  outcome?: string;
-  realizedProfitUSD?: number;
-  unrealizedProfitUSD?: number;
+  gradeThreshold: number;
+  betAmount: number;
+  betAmountETH: number;
+  contractAddress: string;
+  transactionHash: string;
+  resolved: boolean;
+  timestamp: { $date: string } | string | Date;
+  profit: number;
+  won: boolean;
 }
 
 interface BetsResponse { bets: RawBet[]; }
@@ -65,24 +60,40 @@ export default function BetsLiveTable({ bets: externalBets, passive }: BetsLiveT
               <th className="px-4 py-3 font-semibold">Grade Threshold</th>
               <th className="px-4 py-3 font-semibold">Bet Amount (USD)</th>
               <th className="px-4 py-3 font-semibold">Bet Amount (ETH)</th>
+              <th className="px-4 py-3 font-semibold">Status</th>
+              <th className="px-4 py-3 font-semibold">Profit (USD)</th>
               <th className="px-4 py-3 font-semibold">Timestamp</th>
             </tr>
           </thead>
           <tbody>
             {bets.map(b => {
-              const betId = b.betId ?? b.id ?? '—';
-              const gradeThreshold = b.gradeThreshold ?? b.threshold ?? '—';
-              const betAmount = b.betAmount ?? b.stakeUSD ?? '—';
-              const betAmountETH = b.betAmountETH ?? b.stakeETH ?? '—';
-              const timestamp = b.timestamp || b.createdAt || null;
+              let timestamp: Date | null = null;
+              if (b.timestamp) {
+                if (typeof b.timestamp === 'object' && '$date' in b.timestamp) {
+                  timestamp = new Date(b.timestamp.$date);
+                } else {
+                  timestamp = new Date(b.timestamp as string | Date);
+                }
+              }
+
+              const statusText = b.resolved ? (b.won ? 'Won' : 'Lost') : 'Open';
+              const statusColor = b.resolved ? (b.won ? 'text-green-600' : 'text-red-600') : 'text-blue-600';
+              const profitColor = b.profit >= 0 ? 'text-green-600' : 'text-red-600';
+
               return (
-                <tr key={String(betId)} className="border-t border-border hover:bg-muted/30 transition-colors">
-                  <td className="px-4 py-2 font-medium">{String(betId)}</td>
+                <tr key={b.betId} className="border-t border-border hover:bg-muted/30 transition-colors">
+                  <td className="px-4 py-2 font-medium">{b.betId}</td>
                   <td className="px-4 py-2">{b.courseCode}</td>
-                  <td className="px-4 py-2">{gradeThreshold}</td>
-                  <td className="px-4 py-2">{betAmount}</td>
-                  <td className="px-4 py-2">{betAmountETH}</td>
-                  <td className="px-4 py-2 text-muted-foreground">{timestamp? new Date(timestamp as any).toLocaleString(): '—'}</td>
+                  <td className="px-4 py-2">{b.gradeThreshold}%</td>
+                  <td className="px-4 py-2">${b.betAmount.toFixed(2)}</td>
+                  <td className="px-4 py-2">{b.betAmountETH.toFixed(6)} ETH</td>
+                  <td className={`px-4 py-2 font-medium ${statusColor}`}>{statusText}</td>
+                  <td className={`px-4 py-2 font-medium ${profitColor}`}>
+                    {b.resolved ? `$${b.profit.toFixed(2)}` : '—'}
+                  </td>
+                  <td className="px-4 py-2 text-muted-foreground">
+                    {timestamp ? timestamp.toLocaleString() : '—'}
+                  </td>
                 </tr>
               );
             })}

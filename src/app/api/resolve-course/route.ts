@@ -81,17 +81,35 @@ export async function POST(req: NextRequest) {
 
             for (const resolvedBet of resolutionResult.resolvedBets) {
               // Find the corresponding bet in MongoDB to get the original USD bet amount
-              const userBet = await users.findOne(
+              const userBetResult = await users.aggregate([
                 {
-                  "bets.betId": resolvedBet.betId,
-                  "bets.contractAddress": contractAddress
+                  $match: {
+                    "bets": {
+                      $elemMatch: {
+                        "betId": resolvedBet.betId,
+                        "contractAddress": contractAddress
+                      }
+                    }
+                  }
                 },
                 {
-                  projection: { "bets.$": 1 }
+                  $project: {
+                    bet: {
+                      $filter: {
+                        input: "$bets",
+                        cond: {
+                          $and: [
+                            { $eq: ["$$this.betId", resolvedBet.betId] },
+                            { $eq: ["$$this.contractAddress", contractAddress] }
+                          ]
+                        }
+                      }
+                    }
+                  }
                 }
-              );
+              ]).toArray();
 
-              const betAmount = userBet?.bets?.[0]?.betAmount || 0;
+              const betAmount = userBetResult?.[0]?.bet?.[0]?.betAmount || 0;
               const profit = resolvedBet.won ? 1.0 - betAmount : -betAmount;
 
               // Update the bet in the user's bets array
