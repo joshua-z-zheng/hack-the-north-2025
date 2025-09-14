@@ -86,6 +86,7 @@ export default function AdminUserView({ user }: Props) {
           <p className="text-lg text-muted-foreground leading-relaxed">Student profile.</p>
         </div>
         <div>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2 leading-snug">Add a Course</h1>
           <div className="mb-8 max-w-md p-6 bg-white rounded-2xl shadow-md border border-gray-200 flex gap-3">
             <input 
               type="text" placeholder="Course Code" onChange={function(e) {setAddCourseCode(e.target.value)}}
@@ -108,7 +109,7 @@ export default function AdminUserView({ user }: Props) {
                 console.log(res);
               }}
             >
-              Add a Course
+              Enroll
             </button>
           </div>
           <h1 className="text-2xl font-semibold text-gray-900 mb-2 leading-snug">Courses</h1>
