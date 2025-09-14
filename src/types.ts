@@ -8,7 +8,7 @@ export class Course {
   code: string = "";
   desc: string = "";
   past: boolean = false;
-  grade: number = 100;
+  grade: number | null = null;
   odds: Market[] = [];
 
   constructor(code: string) {
@@ -27,6 +27,7 @@ export class Course {
 }
 
 export class User {
+  _id?: any;
   email: string = "";
   sub: string = "";
   courses: Course[] = [];

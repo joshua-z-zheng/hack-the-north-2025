@@ -13,6 +13,7 @@ export default async function AdminPage({ params }: Props) {
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
   const user: User = await db.collection("users").findOne({"email": decodeURIComponent(id.trim())}) as any;
+  user._id = undefined;
 
   if (!user) {
     return (
