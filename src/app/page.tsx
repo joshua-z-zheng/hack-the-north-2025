@@ -10,7 +10,7 @@ export default async function HomePage() {
       <div className="min-h-screen bg-background">
         <main className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2 leading-tight">Market Insights Dashboard</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2 leading-tight">Dashboard</h1>
             <p className="text-lg text-muted-foreground leading-relaxed">Please log in to view your courses</p>
           </div>
         </main>
@@ -22,8 +22,8 @@ export default async function HomePage() {
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2 leading-tight">Market Insights Dashboard</h1>
-          <p className="text-lg text-muted-foreground leading-relaxed">Stay informed with the latest market trends and analysis</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2 leading-tight">Dashboard</h1>
+          <p className="text-lg text-muted-foreground leading-relaxed">Your courses will appear here once added to your profile.</p>
         </div>
 
         {courses.length === 0 ? (
@@ -37,7 +37,7 @@ export default async function HomePage() {
                 key={index}
                 id={index}
                 title={course.code}
-                details={course.desc}
+                odds={course.odds}
               />
             ))}
           </div>

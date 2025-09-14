@@ -1,6 +1,7 @@
 import { cookies } from "next/headers"
 import jwt from "jsonwebtoken"
 import clientPromise from "@/lib/mongodb"
+import { NextResponse } from "next/server"
 
 export interface Course {
   code: string
@@ -11,20 +12,20 @@ export interface Course {
   }[]
 }
 
-export async function getUserCourses(): Promise<Course[]> {
+export async function GET() {
   try {
     const cookieStore = await cookies()
     const idToken = cookieStore.get("id_token")
 
     if (!idToken?.value) {
-      return []
+      return NextResponse.json([])
     }
 
     const decoded: any = jwt.decode(idToken.value)
     const sub = decoded?.sub
 
     if (!sub) {
-      return []
+      return NextResponse.json([])
     }
 
     const client = await clientPromise
@@ -32,15 +33,9 @@ export async function getUserCourses(): Promise<Course[]> {
     const users = db.collection("users")
 
     const user = await users.findOne({ sub })
-    return user?.courses || []
+    return NextResponse.json(user?.courses || [])
   } catch (error) {
     console.error("Error fetching user courses:", error)
-    return []
+    return NextResponse.json([])
   }
-}
-
-export async function getAuthState() {
-  const cookieStore = await cookies()
-  const idToken = cookieStore.get("id_token")
-  return !!idToken
 }
