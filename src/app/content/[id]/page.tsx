@@ -211,8 +211,9 @@ export default function ContentDetailPage({ params }: Props) {
                     const updated = await getUserCourses();
                     setCourses(updated);
                     const resolvedParams = await params;
-                    const idx = Number.parseInt(resolvedParams.id);
-                    setCourse(updated[idx] || null);
+                    const courseCode = resolvedParams.id; // Use courseCode instead of treating as index
+                    const foundCourse = updated.find(course => course.code === courseCode);
+                    setCourse(foundCourse || null);
                   } catch (e) {
                     console.warn('Odds refresh failed', e);
                   }

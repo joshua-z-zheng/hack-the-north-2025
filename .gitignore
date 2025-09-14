@@ -44,3 +44,6 @@ next-env.d.ts
 mlenv/
 venv/
 .venv/
+
+# Python cache
+__pycache__/
