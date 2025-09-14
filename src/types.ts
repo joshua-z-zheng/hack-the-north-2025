@@ -6,6 +6,9 @@ export class Market {
 
 export class Course {
   code: string = "";
+  desc: string = "";
+  past: boolean = false;
+  grade: number = 100;
   odds: Market[] = [];
 
   constructor(code: string) {
