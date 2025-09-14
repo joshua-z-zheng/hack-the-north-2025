@@ -21,6 +21,7 @@ interface Props {
 }
 
 export default function AdminUserView({ user }: Props) {
+  const [addCourseCode, setAddCourseCode] = useState("");
   const [courses, setCourses] = useState(user.courses);
   const [pendingGrades, setPendingGrades] = useState<{ [courseCode: string]: number }>({});
   const [isSubmitting, setIsSubmitting] = useState<{ [courseCode: string]: boolean }>({});
@@ -87,7 +88,7 @@ export default function AdminUserView({ user }: Props) {
         <div>
           <div className="mb-8 max-w-md p-6 bg-white rounded-2xl shadow-md border border-gray-200 flex gap-3">
             <input 
-              type="text" placeholder="Course Code" 
+              type="text" placeholder="Course Code" onChange={function(e) {setAddCourseCode(e.target.value)}}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition"
             />
             <button 
@@ -101,7 +102,7 @@ export default function AdminUserView({ user }: Props) {
                   },
                   body: JSON.stringify({
                     id: user.email,
-                    courseCode: "MATH 115"
+                    courseCode: addCourseCode
                   })
                 })
                 console.log(res);
