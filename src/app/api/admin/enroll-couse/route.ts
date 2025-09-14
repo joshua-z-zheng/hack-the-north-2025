@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   }
 
   const client = await clientPromise;
-  const db = client.db("scholarmarket");
+  const db = client.db(process.env.MONGODB_DB);
   const coll = db.collection("users");
 
   const curr = await coll.findOne({email: body.id});
