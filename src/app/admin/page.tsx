@@ -20,7 +20,7 @@ export default async function AdminPage() {
               let user = users[i];
               displ.push(
                 <div key={i} className="m-4">
-                  <a href="/admin"
+                  <a href={`/admin/view-user/${user.email}`}
                   className="block max-w-md mx-auto p-6 bg-white rounded-2xl shadow-md border border-gray-200 hover:shadow-lg hover:bg-gray-50 transition cursor-pointer">
                     <h2 className="text-xl font-semibold text-gray-800 mb-2">{user.email}</h2>
                     {/* <p className="text-gray-600">
