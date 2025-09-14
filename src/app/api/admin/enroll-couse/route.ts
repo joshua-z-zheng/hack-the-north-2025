@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
-import { Course } from "@/types";
+import { Course, User } from "@/types";
 
 export async function POST(req: Request) {
   const body: {id: string, courseCode: string} = await req.json();
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   const db = client.db(process.env.MONGODB_DB);
   const coll = db.collection("users");
 
-  const curr = await coll.findOne({email: body.id});
+  const curr: User = await coll.findOne({email: body.id}) as any as User;
   if (!curr) {
     return NextResponse.json({ error: "User DNE" }, { status: 400 });
   }
