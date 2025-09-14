@@ -88,11 +88,11 @@ export default function AdminUserView({ user }: Props) {
         <div>
           <h1 className="text-2xl font-semibold text-gray-900 mb-2 leading-snug">Add a Course</h1>
           <div className="mb-8 max-w-md p-6 bg-white rounded-2xl shadow-md border border-gray-200 flex gap-3">
-            <input 
+            <input
               type="text" placeholder="Course Code" onChange={function(e) {setAddCourseCode(e.target.value)}}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition"
             />
-            <button 
+            <button
               type="submit"
               className="px-5 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1 transition"
               onClick={async function() {
@@ -122,7 +122,7 @@ export default function AdminUserView({ user }: Props) {
 
               <dl className="space-y-2 text-gray-700">
                 <div className="flex justify-between items-center">
-                  <dt className="font-medium">Current Grade:</dt>
+                  <dt className="font-medium">Grade:</dt>
                   {course.grade !== null && course.grade !== undefined ? (
                     <dd className="font-semibold text-blue-600">{course.grade}%</dd>
                   ) : (

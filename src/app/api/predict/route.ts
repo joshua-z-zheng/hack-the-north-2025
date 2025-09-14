@@ -34,15 +34,18 @@ export async function GET(request?: Request) {
     let sub: string | undefined;
     if (!isProd && devHeader) {
       sub = devHeader;
+      console.log('[predict][GET] using dev header sub', sub);
     } else {
       const cookieStore = await cookies();
       const idToken = cookieStore.get("id_token");
       if (!idToken?.value) {
+        console.log('[predict][GET] no id_token cookie');
         return NextResponse.json({ error: "not_authenticated" }, { status: 200 });
       }
       const decoded: any = jwt.decode(idToken.value);
       sub = decoded?.sub;
       if (!sub) {
+        console.log('[predict][GET] decoded token missing sub');
         return NextResponse.json({ error: "no_sub" }, { status: 200 });
       }
     }
@@ -52,6 +55,7 @@ export async function GET(request?: Request) {
     const users = db.collection("users");
     const user = await users.findOne({ sub });
     if (!user) {
+      console.log('[predict][GET] user not found for sub', sub);
       return NextResponse.json({ error: "user_not_found" }, { status: 200 });
     }
 
@@ -61,6 +65,7 @@ export async function GET(request?: Request) {
       .filter((g: any) => typeof g === 'number' && !isNaN(g));
 
     if (rawGrades.length === 0) {
+      console.log('[predict][GET] no grades available for user', sub);
       return NextResponse.json({ error: "no_grades" }, { status: 200 });
     }
 
@@ -81,6 +86,7 @@ export async function GET(request?: Request) {
       });
       clearTimeout(timeout);
       statusCode = resp.status;
+      console.log('[predict][GET] upstream fetch', ML_BASE + REG_ENDPOINT, 'status', statusCode);
       if (!resp.ok) {
         return NextResponse.json({ error: 'ml_upstream_error', status: resp.status }, { status: 502 });
       }
@@ -88,6 +94,7 @@ export async function GET(request?: Request) {
     } catch (e: any) {
       clearTimeout(timeout);
       const aborted = e?.name === 'AbortError';
+      console.log('[predict][GET] upstream error', aborted ? 'timeout' : e?.message);
       return NextResponse.json({ error: aborted ? 'ml_timeout' : 'ml_fetch_error' }, { status: 504 });
     }
 
@@ -130,15 +137,18 @@ export async function POST(req: Request) {
     let sub: string | undefined;
     if (!isProd && devHeader) {
       sub = devHeader;
+      console.log('[predict][POST] using dev header sub', sub);
     } else {
       const cookieStore = await cookies();
       const idToken = cookieStore.get("id_token");
       if (!idToken?.value) {
+        console.log('[predict][POST] no id_token cookie');
         return NextResponse.json({ error: "not_authenticated" }, { status: 200 });
       }
       const decoded: any = jwt.decode(idToken.value);
       sub = decoded?.sub;
       if (!sub) {
+        console.log('[predict][POST] decoded token missing sub');
         return NextResponse.json({ error: "no_sub" }, { status: 200 });
       }
     }
@@ -174,6 +184,7 @@ export async function POST(req: Request) {
     }
 
     if (gradesSource.length === 0) {
+      console.log('[predict][POST] no grades available for user', sub, 'fromBody=', fromBody);
       return NextResponse.json({ error: 'no_grades' }, { status: 200 });
     }
 
@@ -194,6 +205,7 @@ export async function POST(req: Request) {
       });
       clearTimeout(timeout);
       statusCode = resp.status;
+      console.log('[predict][POST] upstream fetch', ML_BASE + REG_ENDPOINT, 'status', statusCode);
       if (!resp.ok) {
         return NextResponse.json({ error: 'ml_upstream_error', status: resp.status }, { status: 502 });
       }
@@ -201,6 +213,7 @@ export async function POST(req: Request) {
     } catch (e: any) {
       clearTimeout(timeout);
       const aborted = e?.name === 'AbortError';
+      console.log('[predict][POST] upstream error', aborted ? 'timeout' : e?.message);
       return NextResponse.json({ error: aborted ? 'ml_timeout' : 'ml_fetch_error' }, { status: 504 });
     }
 

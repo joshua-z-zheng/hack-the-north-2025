@@ -71,7 +71,7 @@ export default function ContentDetailPage({ params }: Props) {
   useEffect(() => {
     const loadData = async () => {
       const resolvedParams = await params
-      const courseId = Number.parseInt(resolvedParams.id)
+      const courseCode = resolvedParams.id // This is now the course code, not an index
 
       setId(resolvedParams.id)
 
@@ -81,7 +81,9 @@ export default function ContentDetailPage({ params }: Props) {
       if (authState) {
         const userCourses = await getUserCourses()
         setCourses(userCourses)
-        setCourse(userCourses[courseId] || null)
+        // Find course by code instead of index
+        const foundCourse = userCourses.find(course => course.code === courseCode)
+        setCourse(foundCourse || null)
       }
 
       setLoading(false)
@@ -90,9 +92,12 @@ export default function ContentDetailPage({ params }: Props) {
     loadData()
   }, [params])
 
-  // Fetch prediction once user data is available
+  const predictionOnceRef = useRef(false)
+  // Fetch prediction once user data AND course are available
   useEffect(() => {
-    if (!isLoggedIn) return
+    if (!isLoggedIn || !course) return
+    if (predictionOnceRef.current) return
+    predictionOnceRef.current = true
     setPredictionLoading(true)
     setPredictionError(null)
     fetch('/api/predict?debug=1')
@@ -157,12 +162,70 @@ export default function ContentDetailPage({ params }: Props) {
           for (let i=1;i<scaled.length;i++){ d += `L ${scaled[i].x} ${scaled[i].y} ` }
           d += `L 100 ${height+5} Z`
           setCurvePath(d)
+          // Seed-mode odds sync: send all buckets only if not previously seeded; afterwards only <50% buckets
+          try {
+            if (course?.code) {
+              const allBuckets = probs.map(p => ({ threshold: p.threshold, probability: p.p }));
+              const thresholds = new Set(allBuckets.map(b => b.threshold));
+              const alreadySeeded = (course.odds || []).some(o => thresholds.has(o.threshold));
+              const isSeed = !alreadySeeded || (course.odds || []).length === 0;
+
+              const bucketsToSend = isSeed
+                ? allBuckets
+                : allBuckets.filter(b => b.probability < 0.5); // selective low-probability maintenance
+
+              if (!bucketsToSend.length) {
+                // nothing to send in selective mode (e.g., all probabilities >= 50%)
+                return;
+              }
+
+              // Optimistic update: merge only the buckets we are sending (or all if seeding)
+              setCourse(prev => {
+                if (!prev) return prev;
+                const oddsMap = new Map<number, { threshold:number; probability:number; shares?:number }>();
+                prev.odds.forEach(o => oddsMap.set(o.threshold, o));
+                bucketsToSend.forEach(b => {
+                  const existing = oddsMap.get(b.threshold);
+                  if (existing) existing.probability = b.probability;
+                  else oddsMap.set(b.threshold, { threshold: b.threshold, probability: b.probability, shares: 0 });
+                });
+                return { ...prev, odds: Array.from(oddsMap.values()).sort((a,b)=>a.threshold-b.threshold) };
+              });
+
+              const body: any = { courseCode: course.code, buckets: bucketsToSend };
+              if (isSeed) body.all = true; // inform backend this is a seed/full sync
+
+              fetch('/api/odds/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+              })
+                .then(async r => {
+                  if (!r.ok) {
+                    console.warn('Odds update failed status', r.status);
+                    return;
+                  }
+                  try { const j = await r.json(); console.log('Odds update response', j); } catch {}
+                  // Re-fetch user courses to capture updated odds probabilities
+                  try {
+                    const updated = await getUserCourses();
+                    setCourses(updated);
+                    const resolvedParams = await params;
+                    const idx = Number.parseInt(resolvedParams.id);
+                    setCourse(updated[idx] || null);
+                  } catch (e) {
+                    console.warn('Odds refresh failed', e);
+                  }
+                })
+                .catch(() => { });
+            }
+          } catch { }
         }
       })
       .catch(e => setPredictionError(e.message || 'prediction_failed'))
       .finally(() => setPredictionLoading(false))
     return () => { if (animationRef.current) cancelAnimationFrame(animationRef.current) }
-  }, [isLoggedIn])
+  }, [isLoggedIn, course])
 
   // Animate bucket probability bars when probabilities load
   useEffect(() => {
@@ -363,7 +426,19 @@ export default function ContentDetailPage({ params }: Props) {
               <div className="bg-card border border-border rounded-lg p-6">
                 <h2 className="text-xl font-semibold mb-6">🎯 Bet On Yourself</h2>
                 <div className="grid grid-cols-1 gap-4">
-                  {course.odds.map((odd, index) => {
+                  {(() => {
+                    const filteredOdds = course.odds.filter(o => {
+                      if (typeof o.probability !== 'number') return true; // keep if unknown
+                      return o.probability <= 0.5; // only +50% chance
+                    });
+                    if (!filteredOdds.length) {
+                      return (
+                        <div className="text-sm text-muted-foreground">
+                          No markets with ≥50% probability yet.
+                        </div>
+                      )
+                    }
+                    return filteredOdds.map((odd, index) => {
                     const hasShares = (odd.shares || 0) > 0
                     const isSelected = selectedMarket === index
                     return (
@@ -448,7 +523,7 @@ export default function ContentDetailPage({ params }: Props) {
                         </div>
                       </button>
                     )
-                  })}
+                  })})()}
                 </div>
               </div>
             </div>

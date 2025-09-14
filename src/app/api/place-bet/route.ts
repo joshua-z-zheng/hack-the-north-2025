@@ -1,5 +1,8 @@
-// DEPRECATED: Use /api/bets (GET/POST). This route retained temporarily for backward compatibility.
-import { NextResponse } from "next/server";
+import { cookies } from "next/headers"
+import jwt from "jsonwebtoken"
+import clientPromise from "@/lib/mongodb"
+import { NextResponse } from "next/server"
+import { NextRequest } from "next/server"
 
 export async function POST(request: NextRequest) {
   try {
